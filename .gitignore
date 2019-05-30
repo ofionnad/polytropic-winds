@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ignore all logs
+*.log
+
+# ignore output files
+output/
+
+# ignore compressed files
+*.zip
+*.tar
+*.tar.gz
+*.gz
