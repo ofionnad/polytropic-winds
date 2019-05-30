@@ -30,14 +30,15 @@ rho0 = float(1.0e12)
 M = 1.989e30 * stellar_mass #mass of the star in kg
 r0 = 6.957e8 * stellar_radius #radius of the star in m
 T0 = stellar_temp #temperature of the corona
-gamma = 1.0001 #polytropic index
+#gamma = 1.0001 #polytropic index
 ############################################
 ############################################
 
 
 if len(sys.argv) > 1:
     u0 = float(sys.argv[1])
-    filename = "polytropic_wind_solar.dat"
+    filename = "output/polytropic_wind_solar.dat"
+    gamma = sys.argv[2]
 
 """
 #some useful parameters
@@ -49,7 +50,7 @@ c2v = cs0/vesc0    #ratio of velocity to soound speed
 """
 
 
-def calculate(u0, filename):
+def calculate(u0, gamma, filename):
     """
     Main function: Runs the code
     Calls derivs and rk4 functions
@@ -82,10 +83,10 @@ def calculate(u0, filename):
     #Call the derivs function here
     for k in range(100000):
 
-        dyy, numden, break_, radius = derivs(x, y, T, break_)
+        dyy, numden, break_, radius = derivs(x, y, T, gamma, break_)
 
         #call the rk4 function here
-        y = RK4(y, dyy, x, h, T, break_)
+        y = RK4(y, dyy, x, h, T, gamma, break_)
 
         rho1 = float(rho * (u0 / (y*r0))*(1/x)**2)
 
@@ -105,7 +106,7 @@ def calculate(u0, filename):
 """
 ------------Derivation Calculation - derivs------------
 """
-def derivs(x, y, T, break_):
+def derivs(x, y, T, gamma, break_):
     """
     This function simply finds the derivative of the wind velocity w.r.t. radius.
     This function is called multiple times throughout this script, in the calculate() function and the RK4() function.
@@ -138,7 +139,7 @@ def derivs(x, y, T, break_):
 -----------Runge Kutta method------------
 """
 
-def RK4(y, dyy, x, h, T, break_):
+def RK4(y, dyy, x, h, T, gamma, break_):
 
     hh = h * 0.5
     h6 = h/6
@@ -148,17 +149,17 @@ def RK4(y, dyy, x, h, T, break_):
     yt = y + (hh * dyy)
 
     #Second iteration
-    dyt, nul, break_, nul2 = derivs(xh, yt, T, break_)
+    dyt, nul, break_, nul2 = derivs(xh, yt, T, gamma, break_)
     yt = y + (hh * dyt)
 
     #Third iteration
-    dym, nul, break_, nul2 = derivs(xh, yt, T, break_)
+    dym, nul, break_, nul2 = derivs(xh, yt, T, gamma, break_)
     yt = y + h*dym
     dym += dyt
 
     #fourth iteration
     s = x+h
-    dyt, nul, break_, nul2 = derivs(s, yt, T, break_)
+    dyt, nul, break_, nul2 = derivs(s, yt, T, gamma, break_)
 
     #runge-kutta sum
     yout = y + h6 * (dyy + dyt + 2*dym)

@@ -27,21 +27,23 @@ rho0 = float(1.0e12)
 M = 1.989e30 * stellar_mass #mass of the star in kg
 r0 = 6.957e8 * stellar_radius #radius of the star in m
 T0 = stellar_temp #temperature of the corona
-gamma = 1.0001  #polytropic index
+#gamma = 1.0001  #polytropic index
 ############################################
 ############################################
 
 if len(sys.argv) > 1:
     u0 = float(sys.argv[1])
-    filename = 'polytropic_wind_solar.dat'
+    filename = 'output/polytropic_wind_solar.dat'
 
-cs = math.sqrt((gamma*kB*T0)/(mu*mp))
-rc = ((G*M)/(2.*(cs**2.)))
 
-def postwind(u_0, file_name):
+def postwind(u_0, gamma, file_name):
     """
     Function that runs the polytropic model after the critical point (and extrapolation())
     """
+
+    cs = math.sqrt((gamma*kB*T0)/(mu*mp))
+    rc = ((G*M)/(2.*(cs**2.)))
+
     #Read in last values after extrapolation
     x2, v = np.loadtxt(file_name, delimiter=' ', usecols=(0, 1), unpack=True)
     x1 = float(x2[x2.size - 1])
@@ -53,9 +55,9 @@ def postwind(u_0, file_name):
 
     f = open(file_name, "a")
     for k in range(100000):
-        dyy = derivs2(x1, y, T)
+        dyy = derivs2(x1, y, T, gamma)
 
-        y = RK42(y, dyy, x1, h, T)
+        y = RK42(y, dyy, x1, h, T, gamma)
 
         u = y*r0
 
@@ -83,7 +85,7 @@ def postwind(u_0, file_name):
 #   derivatives
 #--------------------------
 
-def derivs2(x, y, T):
+def derivs2(x, y, T, gamma):
     """
     Finds derivatives of velocity wrt radius.
     Like other derivatives function,
@@ -102,7 +104,7 @@ def derivs2(x, y, T):
 #   runge-kutta method
 #------------------------
 
-def RK42(y, dyy, x, h0, T):
+def RK42(y, dyy, x, h0, T, gamma):
     """
     Standard Runge-Kutta method
     """
@@ -114,18 +116,18 @@ def RK42(y, dyy, x, h0, T):
     yt = y + (hh * dyy)
 
     #Second iteration
-    dyt = derivs2(xh, yt, T)
+    dyt = derivs2(xh, yt, T, gamma)
 
     yt = y + (hh * dyt)
 
     #Third iteration
-    dym = derivs2(xh, yt, T)
+    dym = derivs2(xh, yt, T, gamma)
     yt = y + h0*dym
     dym += dyt
 
     #fourth iteration
     s = x+h0
-    dyt = derivs2(s, yt, T)
+    dyt = derivs2(s, yt, T, gamma)
 
     #runge-kutta sum
     yout = y + h6 * (dyy + dyt + 2*dym)

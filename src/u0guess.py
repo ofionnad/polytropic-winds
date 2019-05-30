@@ -23,12 +23,18 @@ sns.set_style("whitegrid", {'xtick.major.size': '6.0',
                             'ytick.minor.size': '4.0', 'xtick.direction': u'in',
                             'ytick.direction': u'in', 'xtick.color': '0.05'})
 
+############# code parameters ########################
+n_guess = 80    #resolution of shooting search
+n_runs = 5     #number of times to run shooting search
 #####################################
-n_guess = 50    #resolution of shooting search
-n_runs = 6     #number of times to run shooting search
-umin = 1.0e-7     #start of shooting velocity search (in m/s)
-umax = 1.0e-6  #end of shooting velocity search (in m/s)
-### NOTE: wider search range for u0 works better than a narrow one (typical range 10e4-10e7)
+
+############# wind parameters ######################
+gamma = float(gamma_parameter)
+umin = 1.0     #start of shooting velocity search (in m/s)
+umax = 1.0e4  #end of shooting velocity search (in m/s)
+### NOTE: wider search range for u0 works better than a narrow one
+
+
 filename = "output/directory_name/file_name.dat"
 final_image = "output/directory_name/file_name.png"
 #plottitle = 'starname - g=1.05 T=1.89MK'
@@ -41,7 +47,7 @@ for j in range(n_runs):
     print("Run number: ", j+1)
 
     for x in range(n_guess-1):
-        outputstring = pw.calculate(u_0[x], filename)
+        outputstring = pw.calculate(u_0[x], gamma, filename)
         pos[x] = outputstring[1]
         if outputstring[0] == "den":
             uini = u_0[x]
@@ -69,7 +75,7 @@ ex.extrapolation(uini, filename)
 plt.close('all')
 
 print('\n \n Solving the wind... ... ...\n \n')
-pw2.postwind(uini, filename)
+pw2.postwind(uini, gamma, filename)
 
 print('\n \n Plotting ...\n \n')
 pltwnd.plotwind(filename, final_image, outputstring[1])

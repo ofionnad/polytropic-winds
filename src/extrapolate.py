@@ -8,7 +8,7 @@ import numpy as np
 #u0 = 1.19755e4
 if len(sys.argv) > 1:
     u0 = float(sys.argv[1])
-    filename = "polytropic_wind.dat"
+    filename = "output/polytropic_wind.dat"
 
 def extrapolation(u0, filename):
     """
@@ -17,7 +17,7 @@ def extrapolation(u0, filename):
     #filename = 'polytropic_wind.dat'
 
     rad, vel, rho = np.loadtxt(filename, delimiter=' ', unpack=True)
-    
+
     rho0 = 1.00 #set density to normalised value
     range_extra = 0.01
     radius = []
