@@ -29,8 +29,8 @@ n_runs = 6     #number of times to run shooting search
 umin = 1.0e-7     #start of shooting velocity search (in m/s)
 umax = 1.0e-6  #end of shooting velocity search (in m/s)
 ### NOTE: wider search range for u0 works better than a narrow one (typical range 10e4-10e7)
-filename = "directory_name/file_name.dat"
-final_image = "directory_name/file_name.png"
+filename = "output/directory_name/file_name.dat"
+final_image = "output/directory_name/file_name.png"
 #plottitle = 'starname - g=1.05 T=1.89MK'
 #####################################
 
