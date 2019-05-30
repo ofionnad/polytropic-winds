@@ -24,7 +24,6 @@ kB = float(1.38e-23)
 mp = float(1.673e-27)
 G = float(6.674e-11)
 mu = 0.5
-rho0 = float(1.0e12)
 #############CHANGE THESE###################
 ############################################
 M = 1.989e30 * stellar_mass #mass of the star in kg
@@ -50,7 +49,7 @@ c2v = cs0/vesc0    #ratio of velocity to soound speed
 """
 
 
-def calculate(u0, gamma, filename):
+def calculate(u0, gamma, rho, filename):
     """
     Main function: Runs the code
     Calls derivs and rk4 functions
@@ -59,7 +58,6 @@ def calculate(u0, gamma, filename):
     y = u0 / r0 #normalised velocity
     T = T0
     x = 1.
-    rho = float(rho0)
 
     energy = 0.5*u0**2 - (G*M)/r0 + (gamma/(gamma-1))*kB*T0/(mu*mp)
     max_energy = ((5.-(3*gamma))/(gamma-1.)) * G * M/(r0*4)
@@ -81,7 +79,7 @@ def calculate(u0, gamma, filename):
 
     f = open(filename, "w")
     #Call the derivs function here
-    for k in range(100000):
+    for k in range(10000000):
 
         dyy, numden, break_, radius = derivs(x, y, T, gamma, break_)
 

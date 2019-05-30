@@ -68,8 +68,8 @@ echo Mars Analogue Distance: $radm   R_star
 
 echo -e ---- \n
 
-echo -e " Earth Analogue data: \n ---- \n Distance   v (m/s)      rho (norm) " && cat $5/$6.dat | awk '$1 ~ '$rade' '
-echo -e "\n ----\n  Mars-Analogue data: \n Distance  v (m/s)       rho(norm)" && cat $5/$6.dat | awk '$1 ~ '$radm' '
+echo -e " Earth Analogue data: \n ---- \n Distance   v (m/s)      rho (norm) " && cat output/$5/$6.dat | awk '$1 ~ '$rade' '
+echo -e "\n ----\n  Mars-Analogue data: \n Distance  v (m/s)       rho(norm)" && cat output/$5/$6.dat | awk '$1 ~ '$radm' '
 
-
+rm polywind.py polywind2.py u0guess.py extrapolate.py plotpolywind.py
 

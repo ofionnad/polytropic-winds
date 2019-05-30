@@ -20,7 +20,6 @@ kB = 1.38e-23
 mp = 1.673e-27
 G = 6.674e-11
 mu = 0.5
-rho0 = float(1.0e12)
 
 ##############CHANGE THESE##################
 ############################################
@@ -36,13 +35,11 @@ if len(sys.argv) > 1:
     filename = 'output/polytropic_wind_solar.dat'
 
 
-def postwind(u_0, gamma, file_name):
+def postwind(u_0, gamma, rho0, file_name):
     """
     Function that runs the polytropic model after the critical point (and extrapolation())
     """
 
-    cs = math.sqrt((gamma*kB*T0)/(mu*mp))
-    rc = ((G*M)/(2.*(cs**2.)))
 
     #Read in last values after extrapolation
     x2, v = np.loadtxt(file_name, delimiter=' ', usecols=(0, 1), unpack=True)
@@ -51,18 +48,23 @@ def postwind(u_0, gamma, file_name):
     y = u1 / r0 #normalised velocity after sonic point (u1)
     rho1 = float(rho0 * (u_0/u1) * (1./x1)**2.)
     T = T0 * (rho1/ rho0)**(gamma -1)
+    cs = math.sqrt((gamma*kB*T)/(mu*mp))
+    rc = ((G*M)/(2.*(cs**2.))) / r0
+
+    print("cs    =   {}\n".format(cs))
+    print("r_c    =   {}\n".format(rc))
 
 
     f = open(file_name, "a")
-    for k in range(100000):
+    for k in range(10000000):
         dyy = derivs2(x1, y, T, gamma)
 
         y = RK42(y, dyy, x1, h, T, gamma)
 
         u = y*r0
 
-        rho = float(rho0 * (u_0/(y*r0))*(1./x1)**2.)
-        T = T0 * (rho/rho0)**(gamma-1.)
+        rho1 = float(rho0 * (u_0/u)*(1./x1)**2.)
+        #T = T0 * (rho1/rho0)**(gamma-1.)
 
 
         if (x1 <= 5) and (k%50 == 0):
@@ -72,7 +74,7 @@ def postwind(u_0, gamma, file_name):
         elif (x1 > 12) and (k%500 == 0):
             f.write("%f %.5e %.5e\n" % (x1, u, rho1))
 
-        x1 += h
+        x1 = x1 + h
 
         if x1 >= 500:
             return

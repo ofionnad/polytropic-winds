@@ -29,11 +29,11 @@ n_runs = 5     #number of times to run shooting search
 #####################################
 
 ############# wind parameters ######################
-gamma = float(gamma_parameter)
 umin = 1.0     #start of shooting velocity search (in m/s)
 umax = 1.0e4  #end of shooting velocity search (in m/s)
 ### NOTE: wider search range for u0 works better than a narrow one
-
+gamma = float(gamma_parameter)
+rho0 = float(1.0e5)
 
 filename = "output/directory_name/file_name.dat"
 final_image = "output/directory_name/file_name.png"
@@ -47,7 +47,7 @@ for j in range(n_runs):
     print("Run number: ", j+1)
 
     for x in range(n_guess-1):
-        outputstring = pw.calculate(u_0[x], gamma, filename)
+        outputstring = pw.calculate(u_0[x], gamma, rho0, filename)
         pos[x] = outputstring[1]
         if outputstring[0] == "den":
             uini = u_0[x]
@@ -70,12 +70,14 @@ for j in range(n_runs):
 
 
 print("\n Extrapolating across critical point ... .. \n")
-ex.extrapolation(uini, filename)
+ex.extrapolation(uini, rho0, filename)
+ex.extrapolation(uini, rho0, filename)
+
 
 plt.close('all')
 
 print('\n \n Solving the wind... ... ...\n \n')
-pw2.postwind(uini, gamma, filename)
+pw2.postwind(uini, gamma, rho0, filename)
 
 print('\n \n Plotting ...\n \n')
 pltwnd.plotwind(filename, final_image, outputstring[1])
