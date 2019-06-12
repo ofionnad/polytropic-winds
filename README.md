@@ -29,3 +29,11 @@ Gamma - The polytropic index, which has to lie between 1 and 5./3. physically
 
 
 The wind density has no effect on the solution and just scales the density up and down. This can be set inside u0guess.py
+
+
+Given the particular stellar wind you simulate you will need to change the range of starting velocities given in u0guess.py - umin and umax
+'Reasonable' is something you will have to play around with if you are not sure.
+
+Some advice here:
+    Code should always start with the numerator > 0 and not the denominator >0. If this happens than you need to reduce you umin!
+    If you get the error 'no index exists' that means the required u0 does not exist in your range umin and umax and you need to increase it (usually increase umax).

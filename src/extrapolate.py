@@ -37,7 +37,7 @@ def extrapolation(u0, rho0, filename):
     x1 = (radius[1]+range_extra)
 
     with open(filename, "a") as f:
-        f.write("%f %f %f\n" % (x1, u1, rho1))
+        f.write("%f %f %.5e\n" % (x1, u1, rho1))
 
     return
 

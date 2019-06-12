@@ -29,15 +29,23 @@ n_runs = 5     #number of times to run shooting search
 #####################################
 
 ############# wind parameters ######################
-umin = 1.0     #start of shooting velocity search (in m/s)
-umax = 1.0e4  #end of shooting velocity search (in m/s)
+umin = 1.0e2     #start of shooting velocity search (in m/s)
+umax = 1.0e6  #end of shooting velocity search (in m/s)
 ### NOTE: wider search range for u0 works better than a narrow one
 gamma = float(gamma_parameter)
-rho0 = float(1.0e5)
+rho0 = float(1.0e13)
 
 filename = "output/directory_name/file_name.dat"
 final_image = "output/directory_name/file_name.png"
 #plottitle = 'starname - g=1.05 T=1.89MK'
+#####################################
+
+
+######### WRITE OUTPUT INFO #########
+print('umin = {:.2e} m/s \t umax = {:.2e} m/s'.format(umin, umax))
+print('gamma = {}'.format(gamma))
+print('n0 = {:.2e} /cc'.format(rho0))
+print('\n\n\n')
 #####################################
 
 for j in range(n_runs):
@@ -70,6 +78,8 @@ for j in range(n_runs):
 
 
 print("\n Extrapolating across critical point ... .. \n")
+ex.extrapolation(uini, rho0, filename)
+ex.extrapolation(uini, rho0, filename)
 ex.extrapolation(uini, rho0, filename)
 ex.extrapolation(uini, rho0, filename)
 

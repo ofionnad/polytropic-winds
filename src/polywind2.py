@@ -77,6 +77,7 @@ def postwind(u_0, gamma, rho0, file_name):
         x1 = x1 + h
 
         if x1 >= 500:
+            print('Terminal velocity =   {} km/s  at a distance of {} Rstar'.format(u/1000.0, x1))
             return
 
     f.close()

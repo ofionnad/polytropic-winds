@@ -26,13 +26,20 @@ G = float(6.674e-11)
 mu = 0.5
 #############CHANGE THESE###################
 ############################################
-M = 1.989e30 * stellar_mass #mass of the star in kg
-r0 = 6.957e8 * stellar_radius #radius of the star in m
+M0 = stellar_mass
+R0 = stellar_radius
+M = 1.989e30 * M0 #mass of the star in kg
+r0 = 6.957e8 * R0 #radius of the star in m
 T0 = stellar_temp #temperature of the corona
 #gamma = 1.0001 #polytropic index
 ############################################
 ############################################
 
+######## WRITE INPUT INFORMATION ###########
+print('M_star = {}'.format(M0))
+print('R_star = {}'.format(R0))
+print('T0 = {:.2e} K'.format(T0))
+############################################
 
 if len(sys.argv) > 1:
     u0 = float(sys.argv[1])
@@ -45,7 +52,7 @@ if len(sys.argv) > 1:
 cs0 = math.sqrt((gamma*kB*T0)/(mu*mp))    #sound speed at surface
 rc = ((G*M)/(2.*(cs0**2.)))    #crit radius
 vesc0 = math.sqrt((2*G*M)/r0)    #escape velocity
-c2v = cs0/vesc0    #ratio of velocity to soound speed
+c2v = cs0/vesc0    #ratio of velocity to sound speed
 """
 
 
@@ -62,7 +69,6 @@ def calculate(u0, gamma, rho, filename):
     energy = 0.5*u0**2 - (G*M)/r0 + (gamma/(gamma-1))*kB*T0/(mu*mp)
     max_energy = ((5.-(3*gamma))/(gamma-1.)) * G * M/(r0*4)
     maximum_T = (G*M)/(r0) * (mu*mp)/kB * (gamma+1)/(4*gamma)
-
 
     if energy < 0:
         print("Error: energy < 0")
@@ -81,10 +87,10 @@ def calculate(u0, gamma, rho, filename):
     #Call the derivs function here
     for k in range(10000000):
 
-        dyy, numden, break_, radius = derivs(x, y, T, gamma, break_)
+        dyy, numden, break_, radius = derivs(x, y, T, gamma, break_, k)
 
         #call the rk4 function here
-        y = RK4(y, dyy, x, h, T, gamma, break_)
+        y = RK4(y, dyy, x, h, T, gamma, break_, k)
 
         rho1 = float(rho * (u0 / (y*r0))*(1/x)**2)
 
@@ -104,7 +110,7 @@ def calculate(u0, gamma, rho, filename):
 """
 ------------Derivation Calculation - derivs------------
 """
-def derivs(x, y, T, gamma, break_):
+def derivs(x, y, T, gamma, break_, kcount):
     """
     This function simply finds the derivative of the wind velocity w.r.t. radius.
     This function is called multiple times throughout this script, in the calculate() function and the RK4() function.
@@ -121,7 +127,8 @@ def derivs(x, y, T, gamma, break_):
     radius = x
 
     if num1 > 0:
-        print("Em x = ", x, "num1 > 0")
+        if (kcount%10==0) or (kcount==1):
+            print("Em x = ", x, "num1 > 0")
         numden = "num"
         break_ = 1
 
@@ -137,7 +144,7 @@ def derivs(x, y, T, gamma, break_):
 -----------Runge Kutta method------------
 """
 
-def RK4(y, dyy, x, h, T, gamma, break_):
+def RK4(y, dyy, x, h, T, gamma, break_, kcount):
 
     hh = h * 0.5
     h6 = h/6
@@ -147,17 +154,17 @@ def RK4(y, dyy, x, h, T, gamma, break_):
     yt = y + (hh * dyy)
 
     #Second iteration
-    dyt, nul, break_, nul2 = derivs(xh, yt, T, gamma, break_)
+    dyt, nul, break_, nul2 = derivs(xh, yt, T, gamma, break_, kcount)
     yt = y + (hh * dyt)
 
     #Third iteration
-    dym, nul, break_, nul2 = derivs(xh, yt, T, gamma, break_)
+    dym, nul, break_, nul2 = derivs(xh, yt, T, gamma, break_, kcount)
     yt = y + h*dym
     dym += dyt
 
     #fourth iteration
     s = x+h
-    dyt, nul, break_, nul2 = derivs(s, yt, T, gamma, break_)
+    dyt, nul, break_, nul2 = derivs(s, yt, T, gamma, break_, kcount)
 
     #runge-kutta sum
     yout = y + h6 * (dyy + dyt + 2*dym)
